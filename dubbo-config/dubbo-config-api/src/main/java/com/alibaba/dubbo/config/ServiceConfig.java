@@ -207,6 +207,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             return;
         }
 
+        // 延时导出服务
         if (delay != null && delay > 0) {
             delayExportExecutor.schedule(new Runnable() {
                 @Override

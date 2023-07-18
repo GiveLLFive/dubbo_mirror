@@ -48,6 +48,10 @@ import static com.alibaba.dubbo.config.spring.util.BeanFactoryUtils.addApplicati
 /**
  * ServiceFactoryBean
  *
+ * ServiceBean 是 Dubbo 与 Spring 框架整合的关键。框架之间的桥梁
+ * 通用作用还有 ReferenceBean
+ * 就是把一些 Bean 加载到 Spring 容器中
+ *
  * @export
  */
 public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean, DisposableBean,
@@ -99,6 +103,9 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        // 是否延迟(true无需延迟导出，false需要延迟导出)：AbstractServiceConfig.delay 什么时候set的，Dubbo启动的时候？
+        // 是否已导出
+        // 是否已被取消导出
         if (isDelay() && !isExported() && !isUnexported()) {
             if (logger.isInfoEnabled()) {
                 logger.info("The service ready on spring started. service: " + getInterface());
@@ -109,6 +116,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
 
     private boolean isDelay() {
         Integer delay = getDelay();
+        // ServiceConfig.provider
         ProviderConfig provider = getProvider();
         if (delay == null && provider != null) {
             delay = provider.getDelay();
